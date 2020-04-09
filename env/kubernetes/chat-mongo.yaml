@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-mongo
+  namespace: chat
+  labels:
+    k8s-app: chat-mongo
+spec:
+  type: NodePort 
+  selector:
+    k8s-app: chat-mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: chat-mongo
+  namespace: chat
+  labels:
+    k8s-app: chat-mongo
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      k8s-app: chat-mongo
+  #RollingUpdate 詳細可看 https://tachingchen.com/tw/blog/Kubernetes-Rolling-Update-with-Deployment/
+  minReadySeconds: 120
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        k8s-app: chat-mongo
+    spec:
+      imagePullSecrets:
+        - name: chat-secret-docker-1400404
+      containers:
+      - name: chat-mongo
+        image: a502dh.systex.com/library/mongo:4.0.4-xenial
+        args: ["--smallfiles"]
+        volumeMounts:
+        #- name: chat-mongo-data
+        #  mountPath: "/data/db"
+        - name: chat-mongo-conf
+          mountPath: "/docker-entrypoint-initdb.d"
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: admin
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: admin
+        - name: MONGO_INITDB_DATABASE 
+          value: chat
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - containerPort: 27017
+      volumes:
+      - name: chat-mongo-data
+        flexVolume:
+          driver: "fvigotti/cifs"
+          secretRef:
+            name: chat-secret-cifs 
+          #readOnly: true(ro)、false(rw)
+          readOnly: false
+          options:
+            source: "//10.1.255.205/chat/mongo/data"
+            #cifs參數可參考 https://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+            mountOptions: "uid=999,gid=999,dir_mode=0700,file_mode=0600"
+      - name: chat-mongo-conf
+        flexVolume:
+          driver: "fvigotti/cifs"
+          secretRef:
+            name: chat-secret-cifs 
+          #readOnly: true(ro)、false(rw)
+          readOnly: false
+          options:
+            source: "//10.1.255.205/chat/mongo/conf"
+            #cifs參數可參考 https://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+            mountOptions: "uid=999,gid=999,dir_mode=0700,file_mode=0600"

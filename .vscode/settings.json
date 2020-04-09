@@ -1,0 +1,6 @@
+{
+  "python.pythonPath": "~/virtualenv/chat/bin/python",
+  "python.linting.enabled": false
+  "tslint.enable": false,
+  "tslint.autoFixOnSave": true,
+}

@@ -1,0 +1,87 @@
+<mat-toolbar color="primary" class="demo-app-header container" fxLayout="row" fxLayoutAlign="center stretch">
+  <div fxFlex="20" fxLayout="row" fxLayoutAlign="start center">
+    <a mat-icon-button (click)="exitRoom()">
+      <mat-icon class="example-icon">arrow_back_ios</mat-icon>
+    </a>
+  </div>
+  <div fxFlex="60" fxLayout="row" fxLayoutAlign="center center">
+    <span>{{name}}</span>
+  </div>
+  <div fxFlex="20" fxLayout="row" fxLayoutAlign="end center">
+    <mat-icon class="example-icon">more_horiz</mat-icon>
+  </div>
+</mat-toolbar>
+
+<div class="demo-app-container">
+
+<!-- 
+<ol class="chat chat-list" #scrollMe [scrollTop]="scrollMe.scrollHeight" >
+  <li *ngFor="let message of messages|async" [ngClass]="[(message.action === undefined && message.from.id === user.id)? 'self': 'other']">
+      <div class="msg">
+          <div class="user" *ngIf="message.action === undefined">
+            <img class="avatar" *ngIf="message.action === undefined" src="data:image/jpeg;base64,{{message.from.avatar}}">{{message.from.name}}</div>
+          <p *ngIf="message.action === undefined"> {{message.content}} </p>
+          <time>{{message.last_modified|date:"MM/dd hh:mm"}}</time>
+      </div>
+  </li>
+</ol>
+-->
+
+<mat-list class="chat-list">
+  <mat-list-item *ngFor="let message of messages|async" [ngClass]="[(message.action === undefined && message.from.id === user.id)? 'chat-list-item': '']">
+    <img matListAvatar *ngIf="message.action === undefined" src="data:image/jpeg;base64,{{message.from.avatar}}" alt="...">
+    <h3 matLine *ngIf="message.action === undefined"> {{message.from.name}} </h3>
+    <p matLine *ngIf="message.action === undefined">
+      <span> {{message.content}} </span>
+    </p>
+    <p matLine *ngIf="message.action === action.JOINED" class="chat-notification">
+      <span> <b>{{message.from.name}}</b> joined to the conversation. </span>
+    </p>
+    <p matLine *ngIf="message.action === action.RENAME" class="chat-notification">
+      <span> <b>{{message.content.previousUsername}}</b> is now <b>{{message.content.username}}</b> </span>
+    </p>
+    <small *ngIf="message.action === undefined">{{message.last_modified|date:"MM/dd HH:mm"}}</small>
+  </mat-list-item>
+</mat-list>
+
+  <div class="demo-chat-footer" style="width:100%;">
+      
+    <mat-expansion-panel disabled hideToggle (afterExpand)="afterExpand(inputMessage)" (afterCollapse)="afterCollapse(inputMessage)">
+      <mat-expansion-panel-header collapsedHeight="80px" expandedHeight="170px">
+          <button mat-icon-button>
+            <mat-icon>attach_file</mat-icon>
+          </button>
+        <form class="example-form">
+          <mat-form-field class="example-full-width">
+            <textarea #inputMessage matInput placeholder="輸入訊息" [(ngModel)]="message" name="message"
+            (keyup.enter)="sendMessage(message)"></textarea>
+            <mat-hint align="end" color="primary">{{inputMessage.value.length}}/140</mat-hint>
+          </mat-form-field>
+        </form>
+        <button mat-icon-button>
+          <mat-icon>send</mat-icon>
+        </button>
+        
+    </mat-expansion-panel-header>
+    
+      <!-- <textarea type="text" #msgInput (keydown.enter)="sendMessage(msgInput.value);false;msgInput.value='';" placeholder="Say something"></textarea>
+    <input type="submit" class="send" value=""/> -->
+    
+    </mat-expansion-panel>
+
+    
+
+    <!-- <mat-card class="main-card">
+      <mat-icon class="example-icon">message</mat-icon>
+      <mat-form-field class="chat-input">
+        <input matInput #inputMessage 
+              maxlength="140" 
+              placeholder="Type your message" 
+              [(ngModel)]="message" 
+              (keyup.enter)="sendMessage(message)">
+        <mat-hint align="end" color="primary">{{inputMessage.value.length}}/140</mat-hint>
+      </mat-form-field>
+    </mat-card> -->
+  </div>
+  <div style="height:97px;"></div>
+</div>

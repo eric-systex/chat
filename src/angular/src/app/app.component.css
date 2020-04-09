@@ -1,0 +1,13 @@
+.demo-app-footer {
+  padding: 0;
+  position: fixed;
+  bottom: 0;
+  z-index: 2;
+}
+.demo-app-footer .mat-icon-button {
+  width: 25%;
+  height: auto;
+  text-align: center;
+  flex-shrink: inherit;
+  line-height: 18px;
+}

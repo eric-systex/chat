@@ -1,0 +1,29 @@
+<mat-toolbar color="primary" class="demo-app-header">
+  <span>SYSTEX 好友</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button (click)="openBottomSheet()"><mat-icon class="example-icon">add</mat-icon></button>
+</mat-toolbar>
+<div class="demo-app-container">
+  <mat-list>
+    <h3 matSubheader>群組</h3>
+    <mat-list-item *ngFor="let group of groups">
+      <img matListAvatar src="data:image/jpeg;base64,{{group.avatar}}" />
+      <h3 matLine>{{group.name}} ({{group.members_count}})</h3>
+      <p matLine>{{group.id}}</p>
+      <a mat-icon-button (click)="openRoom(group.id, group.name)">
+        <mat-icon class="example-icon">chat</mat-icon>
+      </a>
+    </mat-list-item>
+    <h3 matSubheader>好友</h3>
+    <mat-list-item *ngFor="let friend of friends">
+      <img matListAvatar src="data:image/jpeg;base64,{{friend.avatar}}" />
+      <h3 matLine>{{friend.name}}</h3>
+      <p matLine>{{friend.id}}</p>
+      <a mat-icon-button (click)="openRoom(friend.id, friend.name)">
+        <mat-icon class="example-icon">chat</mat-icon>
+      </a>
+    </mat-list-item>
+  </mat-list>
+  <div style="height:64px;"></div>
+</div>
+

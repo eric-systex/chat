@@ -1,0 +1,11 @@
+__pycache__
+
+.project
+.pydevproject
+.settings
+
+chat.log*
+chat.lock
+
+app/static
+app/templates/index.html

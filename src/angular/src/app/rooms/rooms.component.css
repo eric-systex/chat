@@ -1,0 +1,25 @@
+.example-icon {
+  padding: 0 14px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.demo-app-header {
+  position: fixed;
+  top: 0;
+  z-index: 2;
+}
+.demo-app-container {
+  position: absolute;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  height: calc(100vh - 128px);
+  width: 100%;
+}
+
+.mat-list-item, .mat-subheader {
+  color: #bd2d5b;
+}
+

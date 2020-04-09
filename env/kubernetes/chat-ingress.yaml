@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: chat-ingress
+  namespace: chat
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - hosts:
+    - app.systex.com
+    secretName: chat-secret-tls
+  rules:
+  - host: app.systex.com
+    http:
+      paths:
+      - path: /chat
+        backend:
+          serviceName: chat-webapp
+          servicePort: 5000

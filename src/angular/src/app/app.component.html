@@ -1,0 +1,20 @@
+<router-outlet></router-outlet>
+<mat-toolbar color="primary" class="demo-app-footer container" fxLayout="row" 
+   fxLayoutAlign="center stretch">
+  <div fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <a mat-icon-button [routerLink]="['/contacts']">
+      <mat-icon class="example-icon">people</mat-icon><br/>
+    <small>好友</small></a></div>
+  <div fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <a mat-icon-button [routerLink]="['/rooms']">
+      <mat-icon class="example-icon">sms</mat-icon><br/>
+    <small>聊天</small></a></div>
+  <div fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <a mat-icon-button>
+      <mat-icon class="example-icon">verified_user</mat-icon><br/>
+    <small>？？</small></a></div>
+  <div fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <a mat-icon-button>
+      <mat-icon class="example-icon">settings</mat-icon><br/>
+    <small>設定</small></a></div>
+</mat-toolbar>

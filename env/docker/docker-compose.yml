@@ -1,0 +1,68 @@
+version: '2'
+services:
+
+  db:
+    image: a502dh.systex.com/library/mariadb:10.1
+    mem_limit: 256m
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: apps 
+      MYSQL_USER: apps
+      MYSQL_PASSWORD: apps 
+    ports:
+      - 13306:3306
+    volumes:
+      - ./volume/mysql/data:/var/lib/mysql
+
+  mongo:
+    image: a502dh.systex.com/library/mongo:4.0.4-xenial
+    mem_limit: 256m
+    ports:
+      - 17017:27017
+    volumes:
+      - ./volume/mongo/data:/data/db
+      - ./volume/mongo/conf:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: chat
+    command:
+      mongod --auth
+
+  web:
+    image: chat:1
+    depends_on:
+      - db
+      - mongo
+    mem_limit: 512m
+    links:
+      - db
+      - mongo 
+    volumes:
+      - ./volume/flask/log:/var/log
+    environment:
+      TZ: Asia/Taipei
+      FLASK_CONFIG: docker
+      LOG_DIR: "/var/log/"
+      APPS_DB_HOST: db 
+      APPS_DB_USER: apps
+      APPS_DB_PASS: apps
+      APPS_DB_NAME: apps
+      MONGO_DB_HOST: mongo 
+      MONGO_DB_USER: chat
+      MONGO_DB_PASS: chat 
+      MONGO_DB_NAME: chat 
+      
+  proxy:
+    image: a502dh.systex.com/library/nginx:1.15-alpine 
+    mem_limit: 128m
+    links:
+      - web
+    depends_on:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volume/nginx/conf:/etc/nginx/conf.d
+    ports:
+      - 8888:80
+

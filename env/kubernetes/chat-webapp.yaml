@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-webapp
+  namespace: chat
+  labels:
+    k8s-app: chat-webapp
+spec:
+  type: NodePort 
+  selector:
+    k8s-app: chat-webapp
+  ports:
+  - port: 5000 
+    targetPort: 5000
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: chat-webapp
+  namespace: chat
+  labels:
+    k8s-app: chat-webapp
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      k8s-app: chat-webapp
+  #RollingUpdate 詳細可看 https://tachingchen.com/tw/blog/Kubernetes-Rolling-Update-with-Deployment/
+  minReadySeconds: 120
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        k8s-app: chat-webapp
+    spec:
+      imagePullSecrets:
+        - name: chat-secret-docker-1400404
+      containers:
+      - name: chat-webapp
+        image: a502dh.systex.com/systex.chat/chat:1
+        # defines the health checking
+        livenessProbe:
+          # an http probe
+          httpGet:
+            path: /chat/static/favicon.ico 
+            port: 5000 
+            # length of time to wait for a pod to initialize
+            # after pod startup, before applying health checking
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        volumeMounts:
+        - name: chat-flask-logs
+          mountPath: "/var/log"
+        env:
+        - name: TZ
+          value: "Asia/Taipei"
+        - name: LANG
+          value: "zh_TW.UTF-8"
+        - name: SECRET_KEY 
+          value: "this is secret"
+        - name: FLASK_CONFIG 
+          value: "kubernetes"
+        - name: LOG_DIR 
+          value: "/var/log/"
+        - name: TESTING 
+          value: "YES"
+        - name: APPS_DB_HOST 
+          value: "a502dbm.systex.com"
+        - name: APPS_DB_USER 
+          value: "ap_apps_chat"
+        - name: APPS_DB_PASS 
+          value: "xxx"
+        - name: APPS_DB_NAME 
+          value: "apps"
+        - name: MONGO_DB_HOST 
+          value: "chat-mongo"
+        - name: MONGO_DB_USER 
+          value: "chat"
+        - name: MONGO_DB_PASS 
+          value: "xxx"
+        - name: MONGO_DB_NAME 
+          value: "chat"
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: chat-flask-logs
+        flexVolume:
+          driver: "fvigotti/cifs"
+          secretRef:
+            name: chat-secret-cifs 
+          #readOnly: true(ro)、false(rw)
+          readOnly: false
+          options:
+            source: "//10.1.255.205/chat/rotate/flask/logs"
+            #cifs參數可參考 https://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+            mountOptions: "dir_mode=0700,file_mode=0600"

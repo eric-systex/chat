@@ -1,0 +1,20 @@
+<mat-toolbar color="primary" class="demo-app-header">
+  <span>SYSTEX 聊天</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button (click)="openBottomSheet()"><mat-icon class="example-icon">edit</mat-icon></button>
+</mat-toolbar>
+<div class="demo-app-container">
+  <mat-list>
+      <h3 matSubheader>好友訊息</h3>
+      <mat-list-item *ngFor="let room of rooms|async">
+        <img matListAvatar src="data:image/jpeg;base64,{{room.avatar}}" />
+        <h3 matLine>{{room.name}}</h3>
+        <p matLine>{{room.last_message}}</p>
+        <small>{{room.last_modified|date:"MM/dd hh:mm"}}</small>
+        <a mat-icon-button routerLink="/chat/{{room.id}}">
+          <mat-icon class="example-icon">chat</mat-icon>
+        </a>
+      </mat-list-item>
+  </mat-list>
+  <div style="height:64px;"></div>
+</div>
